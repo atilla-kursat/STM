@@ -1,0 +1,10 @@
+11:42:58 **** Incremental Build of configuration Debug for project hid_i2c_device ****
+make -j12 all 
+arm-none-eabi-size   hid_i2c_device.elf 
+   text	   data	    bss	    dec	    hex	filename
+  40132	    356	   3836	  44324	   ad24	hid_i2c_device.elf
+Finished building: default.size.stdout
+ 
+
+11:42:58 Build Finished. 0 errors, 0 warnings. (took 535ms)
+

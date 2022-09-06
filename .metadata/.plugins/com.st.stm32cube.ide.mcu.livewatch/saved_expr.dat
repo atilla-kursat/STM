@@ -1,0 +1,13 @@
+uwTick
+data
+led_data
+counter
+completedcounter
+pwmData
+result
+calculated_crc
+reformed_data
+crc_incoming_result
+crc_incoming_data
+data_corrupted_flag
+checksum

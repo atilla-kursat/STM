@@ -1,0 +1,41 @@
+11:05:34 **** Incremental Build of configuration Debug for project new_board_hid ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_HOST/App -I../USB_HOST/Target -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "new_board_hid.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\stm\new_board_hid\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="new_board_hid.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: new_board_hid.elf
+ 
+arm-none-eabi-size   new_board_hid.elf 
+arm-none-eabi-objdump -h -S  new_board_hid.elf  > "new_board_hid.list"
+arm-none-eabi-objcopy  -O binary  new_board_hid.elf  "new_board_hid.bin"
+   text	   data	    bss	    dec	    hex	filename
+  33064	    152	   3584	  36800	   8fc0	new_board_hid.elf
+Finished building: default.size.stdout
+ 
+Finished building: new_board_hid.list
+ 
+Finished building: new_board_hid.bin
+ 
+11:41:50 **** Incremental Build of configuration Debug for project new_board_hid ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_HOST/App -I../USB_HOST/Target -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "new_board_hid.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\stm\new_board_hid\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="new_board_hid.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: new_board_hid.elf
+ 
+arm-none-eabi-size   new_board_hid.elf 
+arm-none-eabi-objdump -h -S  new_board_hid.elf  > "new_board_hid.list"
+arm-none-eabi-objcopy  -O binary  new_board_hid.elf  "new_board_hid.bin"
+   text	   data	    bss	    dec	    hex	filename
+  33052	    152	   3584	  36788	   8fb4	new_board_hid.elf
+Finished building: default.size.stdout
+ 
+Finished building: new_board_hid.bin
+ 
+Finished building: new_board_hid.list
+ 
+11:42:58 **** Incremental Build of configuration Debug for project hid_i2c_device ****
+make -j12 all 
+arm-none-eabi-size   hid_i2c_device.elf 
+   text	   data	    bss	    dec	    hex	filename
+  40132	    356	   3836	  44324	   ad24	hid_i2c_device.elf
+Finished building: default.size.stdout
+ 
