@@ -1,0 +1,10 @@
+11:02:21 **** Incremental Build of configuration Debug for project ethernet3 ****
+make -j12 all 
+arm-none-eabi-size   ethernet3.elf 
+   text	   data	    bss	    dec	    hex	filename
+  69440	    152	  35112	 104704	  19900	ethernet3.elf
+Finished building: default.size.stdout
+ 
+
+11:02:23 Build Finished. 0 errors, 0 warnings. (took 1s.359ms)
+

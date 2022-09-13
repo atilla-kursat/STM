@@ -1,0 +1,10 @@
+09:53:59 **** Incremental Build of configuration Debug for project Joystick_hid_3 ****
+make -j12 all 
+arm-none-eabi-size   Joystick_hid_3.elf 
+   text	   data	    bss	    dec	    hex	filename
+  29764	    292	   4284	  34340	   8624	Joystick_hid_3.elf
+Finished building: default.size.stdout
+ 
+
+09:54:00 Build Finished. 0 errors, 0 warnings. (took 599ms)
+

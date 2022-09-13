@@ -1,0 +1,17 @@
+10:18:40 **** Incremental Build of configuration Debug for project joystick_hid_4 ****
+make -j12 all 
+arm-none-eabi-gcc "../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Src/usbd_hid.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Middlewares/ST/STM32_USB_Device_Library/Class/HID/Src/usbd_hid.d" -MT"Middlewares/ST/STM32_USB_Device_Library/Class/HID/Src/usbd_hid.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Middlewares/ST/STM32_USB_Device_Library/Class/HID/Src/usbd_hid.o"
+arm-none-eabi-gcc -o "joystick_hid_4.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\stm\joystick_hid_4\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="joystick_hid_4.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: joystick_hid_4.elf
+ 
+arm-none-eabi-size   joystick_hid_4.elf 
+arm-none-eabi-objdump -h -S  joystick_hid_4.elf  > "joystick_hid_4.list"
+   text	   data	    bss	    dec	    hex	filename
+  31768	    268	   4300	  36336	   8df0	joystick_hid_4.elf
+Finished building: default.size.stdout
+ 
+Finished building: joystick_hid_4.list
+ 
+
+10:18:41 Build Finished. 0 errors, 0 warnings. (took 1s.93ms)
+
