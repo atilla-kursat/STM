@@ -19,13 +19,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "lwip.h"
-#include "main.h"
 #include "lwip/pbuf.h"
 #include "lwip/udp.h"
 #include "lwip/tcp.h"
+#include "lwip/icmp.h"
+#include "lwip/raw.h"
 #include <string.h>
 #include <stdio.h>
-#include "ping.h"
+
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -63,6 +64,9 @@ void udpclient_connect();
 void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16_t port);
 void udpClient_send();
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
+void ping_send_now();
+static void ping_send(struct raw_pcb *raw, ip_addr_t *addr);
+static void ping_prepare_echo( struct icmp_echo_hdr *iecho, u16_t len);
 
 
 /* USER CODE END PFP */
@@ -79,9 +83,12 @@ char buffer[100];
 char incoming_ip[15];
 ip_addr_t  myIP,destIP;
 static struct raw_pcb *ping_pcb;
+u32_t ping_time;
+u32_t ping_seq_num;
+
 void udpClient_connect(){
-	err_t err;
-	upcb = udp_new();
+	//err_t err;
+	//upcb = udp_new();
 
 	IP_ADDR4(&myIP,192,168,1,111);
 	IP_ADDR4(&destIP,192,168,1,50);
@@ -126,14 +133,68 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	udpClient_send();
 }
 
-void
-ping_send_now()
+void ping_send_now()
 {
   ip_addr_t ping_target = destIP;
   LWIP_ASSERT("ping_pcb != NULL", ping_pcb != NULL);
   ping_send(ping_pcb, &ping_target);
 }
 
+static void ping_send(struct raw_pcb *raw, ip_addr_t *addr)
+{
+  struct pbuf *p;
+  struct icmp_echo_hdr *iecho;
+  size_t ping_size = sizeof(struct icmp_echo_hdr) + 32;
+
+  LWIP_DEBUGF( PING_DEBUG, ("ping: send "));
+  ip_addr_debug_print(PING_DEBUG, addr);
+  LWIP_DEBUGF( PING_DEBUG, ("\n"));
+  LWIP_ASSERT("ping_size <= 0xffff", ping_size <= 0xffff);
+
+  p = pbuf_alloc(PBUF_IP, (u16_t)ping_size, PBUF_RAM);
+  if (!p) {
+    return;
+  }
+  if ((p->len == p->tot_len) && (p->next == NULL)) {
+    iecho = (struct icmp_echo_hdr *)p->payload;
+
+    ping_prepare_echo(iecho, (u16_t)ping_size);
+
+    raw_sendto(raw, p, addr);
+    ping_time = sys_now();
+  }
+  pbuf_free(p);
+}
+
+static void ping_prepare_echo( struct icmp_echo_hdr *iecho, u16_t len)
+{
+  size_t i;
+  size_t data_len = len - sizeof(struct icmp_echo_hdr);
+
+  ICMPH_TYPE_SET(iecho, ICMP_ECHO);
+  ICMPH_CODE_SET(iecho, 0);
+  iecho->chksum = 0;
+  iecho->id     = 0xAFAF;
+  iecho->seqno  = htons(++ping_seq_num);
+
+  /* fill the additional data buffer with some data */
+  for(i = 0; i < data_len; i++) {
+    ((char*)iecho)[sizeof(struct icmp_echo_hdr) + i] = (char)i;
+  }
+
+  iecho->chksum = inet_chksum(iecho, len);
+}
+
+static void
+ping_raw_init(void)
+{
+  ping_pcb = raw_new(IP_PROTO_ICMP);
+  LWIP_ASSERT("ping_pcb != NULL", ping_pcb != NULL);
+
+
+  raw_bind(ping_pcb, &myIP);
+  sys_timeout(1000, 1000, ping_pcb);
+}
 /* USER CODE END 0 */
 
 /**
@@ -169,10 +230,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
 
-  udpClient_connect();
-
+  //udpClient_connect();
+  IP_ADDR4(&destIP,192,168,1,50);
+  IP_ADDR4(&myIP,192,168,1,111);
+  ping_raw_init();
   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
-  HAL_TIM_Base_Start_IT(&htim1);
+  //HAL_TIM_Base_Start_IT(&htim1);
   //HAL_UART_Transmit(&huart5, msg, 15, 1000);
   //HAL_UART_Receive_DMA(&huart5, inarray, 1);
 
@@ -186,6 +249,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  MX_LWIP_Process();
+	  ping_send_now(ping_pcb, &destIP);
 
 
   }
