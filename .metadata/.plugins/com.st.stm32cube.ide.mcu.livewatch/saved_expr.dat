@@ -5,3 +5,5 @@ inarray
 outarray
 uartchannel
 incoming_ip
+buf
+ping_pcb

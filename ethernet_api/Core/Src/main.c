@@ -26,7 +26,7 @@
 #include "lwip/raw.h"
 #include <string.h>
 #include <stdio.h>
-
+#include "lwip/inet_chksum.h"
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -41,6 +41,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define PING_ID        0xAFAF
+#define PING_RESULT(ping_ok)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -67,6 +69,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void ping_send_now();
 static void ping_send(struct raw_pcb *raw, ip_addr_t *addr);
 static void ping_prepare_echo( struct icmp_echo_hdr *iecho, u16_t len);
+static u8_t ping_recv(void *arg, struct raw_pcb *pcb, struct pbuf *p, ip_addr_t *addr);
 
 
 /* USER CODE END PFP */
@@ -85,29 +88,28 @@ ip_addr_t  myIP,destIP;
 static struct raw_pcb *ping_pcb;
 u32_t ping_time;
 u32_t ping_seq_num;
+struct pbuf *buf;
 
 void udpClient_connect(){
-	//err_t err;
-	//upcb = udp_new();
 
+	err_t err;
+	upcb = udp_new();
 	IP_ADDR4(&myIP,192,168,1,111);
 	IP_ADDR4(&destIP,192,168,1,50);
-	ping_send_now();
-	/*
 	udp_bind(upcb, &myIP, 8);
 	err = udp_connect(upcb, &destIP,7);
 	if(err == ERR_OK){
 		udpClient_send();
 		udp_recv(upcb, udp_receive_callback, NULL);
 	}
-	*/
+
 
 }
 
 void udpClient_send(){
 	struct pbuf *txBuf;
 	char data[100];
-	int len = sprintf(data,"hello, received message count is %d \n",counter);
+	int len = sprintf(data,"Sent ping Count is %d \n Reply Count is",counter);
 	txBuf = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_RAM);
 
 	if(txBuf != NULL){
@@ -185,15 +187,42 @@ static void ping_prepare_echo( struct icmp_echo_hdr *iecho, u16_t len)
   iecho->chksum = inet_chksum(iecho, len);
 }
 
-static void
-ping_raw_init(void)
+static void ping_raw_init(void)
 {
   ping_pcb = raw_new(IP_PROTO_ICMP);
   LWIP_ASSERT("ping_pcb != NULL", ping_pcb != NULL);
 
 
   raw_bind(ping_pcb, &myIP);
-  sys_timeout(1000, 1000, ping_pcb);
+
+}
+
+
+
+static u8_t ping_recv(void *arg, struct raw_pcb *pcb, struct pbuf *p, ip_addr_t *addr)
+{
+  struct icmp_echo_hdr *iecho;
+  LWIP_UNUSED_ARG(arg);
+  LWIP_UNUSED_ARG(pcb);
+  LWIP_UNUSED_ARG(addr);
+  LWIP_ASSERT("p != NULL", p != NULL);
+
+  if (pbuf_header( p, -PBUF_IP_HLEN)==0) {
+    iecho = (struct icmp_echo_hdr *)p->payload;
+
+    if ((iecho->id == PING_ID) && (iecho->seqno == htons(ping_seq_num))) {
+      LWIP_DEBUGF( PING_DEBUG, ("ping: recv "));
+      ip_addr_debug_print(PING_DEBUG, addr);
+      LWIP_DEBUGF( PING_DEBUG, (" %"U32_F" ms\n", (sys_now()-ping_time)));
+
+      /* do some ping result processing */
+      PING_RESULT(1);
+      pbuf_free(p);
+      return 1; /* eat the packet */
+    }
+  }
+
+  return 0; /* don't eat the packet */
 }
 /* USER CODE END 0 */
 
@@ -228,11 +257,12 @@ int main(void)
   MX_LWIP_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+  sys_timeouts_init();
   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
 
-  //udpClient_connect();
-  IP_ADDR4(&destIP,192,168,1,50);
+ // udpClient_connect();
   IP_ADDR4(&myIP,192,168,1,111);
+  IP_ADDR4(&destIP,192,168,1,50);
   ping_raw_init();
   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
   //HAL_TIM_Base_Start_IT(&htim1);
@@ -250,6 +280,9 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  MX_LWIP_Process();
 	  ping_send_now(ping_pcb, &destIP);
+	  ping_recv(0, ping_pcb, buf, &destIP);
+	  HAL_Delay(1000);
+
 
 
   }
