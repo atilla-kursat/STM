@@ -71,7 +71,7 @@ static void ping_send(struct raw_pcb *raw, ip_addr_t *addr);
 static void ping_prepare_echo( struct icmp_echo_hdr *iecho, u16_t len);
 static u8_t ping_recv(void *arg, struct raw_pcb *pcb, struct pbuf *p, ip_addr_t *addr);
 void udpClient_connect_to();
-static void ping_raw_init();
+void ping_raw_init();
 
 /* USER CODE END PFP */
 
@@ -86,7 +86,7 @@ uint8_t customflag=0;
 struct udp_pcb* upcb;
 char buffer[100];
 char incoming_ip[15];
-ip_addr_t ping_target;
+
 ip_addr_t  myIP,destIP,custdestIP;
 static struct raw_pcb *ping_pcb;
 u32_t ping_time;
@@ -152,12 +152,8 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
 		ping_recv(0, ping_pcb, buf, &custdestIP);
 		udpClient_connect();
 		break;
-
-
 	case 5:
 
-
-		break;
 	}
 
 	pbuf_free(p);
@@ -171,10 +167,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void ping_send_now(){
   if(customflag == 0){
-      ping_target = destIP;
+      ip_addr_t ping_target = destIP;
 }
   else{
-	  ping_target = custdestIP;
+	  ip_addr_t ping_target = custdestIP;
   }
   LWIP_ASSERT("ping_pcb != NULL", ping_pcb != NULL);
   ping_send(ping_pcb, &ping_target);
@@ -320,7 +316,7 @@ int main(void)
 	  MX_LWIP_Process();
 	 // ping_send_now(ping_pcb, &destIP);
 	 // ping_recv(0, ping_pcb, buf, &destIP);
-
+	  HAL_Delay(1000);
 
 
 

@@ -70,8 +70,7 @@ void ping_send_now();
 static void ping_send(struct raw_pcb *raw, ip_addr_t *addr);
 static void ping_prepare_echo( struct icmp_echo_hdr *iecho, u16_t len);
 static u8_t ping_recv(void *arg, struct raw_pcb *pcb, struct pbuf *p, ip_addr_t *addr);
-void udpClient_connect_to();
-static void ping_raw_init();
+
 
 /* USER CODE END PFP */
 
@@ -82,12 +81,10 @@ uint8_t inarray[1];
 uint8_t datareceiveflag[4][1];
 uint8_t opcode=0;
 uint8_t counter=0;
-uint8_t customflag=0;
 struct udp_pcb* upcb;
 char buffer[100];
 char incoming_ip[15];
-ip_addr_t ping_target;
-ip_addr_t  myIP,destIP,custdestIP;
+ip_addr_t  myIP,destIP;
 static struct raw_pcb *ping_pcb;
 u32_t ping_time;
 u32_t ping_seq_num;
@@ -97,6 +94,8 @@ void udpClient_connect(){
 
 	err_t err;
 	upcb = udp_new();
+	IP_ADDR4(&myIP,192,168,1,111);
+	IP_ADDR4(&destIP,192,168,1,50);
 	udp_bind(upcb, &myIP, 8);
 	err = udp_connect(upcb, &destIP,7);
 	if(err == ERR_OK){
@@ -104,10 +103,6 @@ void udpClient_connect(){
 		udp_recv(upcb, udp_receive_callback, NULL);
 	}
 
-
-}
-
-void udpClient_connect_to(){
 
 }
 
@@ -131,35 +126,6 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
 	sprintf(incoming_ip,"%s",ipaddr_ntoa(((const ip_addr_t *)&addr->addr)));
 	strncpy (buffer, (char *)p->payload, p->len);
 	counter++;
-	switch (buffer[0]){
-
-	case 2:
-		ping_raw_init();
-		ping_send_now();
-		ping_recv(0, ping_pcb, buf, &destIP);
-		udpClient_connect();
-		break;
-
-	case 3:
-
-		break;
-
-	case 4:
-		IP_ADDR4(&custdestIP,buffer[1],buffer[2],buffer[3],buffer[4]);
-		customflag=1;
-		ping_raw_init();
-		ping_send_now();
-		ping_recv(0, ping_pcb, buf, &custdestIP);
-		udpClient_connect();
-		break;
-
-
-	case 5:
-
-
-		break;
-	}
-
 	pbuf_free(p);
 }
 
@@ -169,13 +135,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	udpClient_send();
 }
 
-void ping_send_now(){
-  if(customflag == 0){
-      ping_target = destIP;
-}
-  else{
-	  ping_target = custdestIP;
-  }
+void ping_send_now()
+{
+  ip_addr_t ping_target = destIP;
   LWIP_ASSERT("ping_pcb != NULL", ping_pcb != NULL);
   ping_send(ping_pcb, &ping_target);
 }
@@ -298,11 +260,10 @@ int main(void)
   sys_timeouts_init();
   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
 
-
+ // udpClient_connect();
   IP_ADDR4(&myIP,192,168,1,111);
   IP_ADDR4(&destIP,192,168,1,50);
-  udpClient_connect();
-  //ping_raw_init();
+  ping_raw_init();
   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
   //HAL_TIM_Base_Start_IT(&htim1);
   //HAL_UART_Transmit(&huart5, msg, 15, 1000);
@@ -318,9 +279,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  MX_LWIP_Process();
-	 // ping_send_now(ping_pcb, &destIP);
-	 // ping_recv(0, ping_pcb, buf, &destIP);
-
+	  ping_send_now(ping_pcb, &destIP);
+	  ping_recv(0, ping_pcb, buf, &destIP);
+	  HAL_Delay(1000);
 
 
 

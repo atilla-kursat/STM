@@ -152,11 +152,7 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
 		ping_recv(0, ping_pcb, buf, &custdestIP);
 		udpClient_connect();
 		break;
-
-
 	case 5:
-
-
 		break;
 	}
 
@@ -320,7 +316,7 @@ int main(void)
 	  MX_LWIP_Process();
 	 // ping_send_now(ping_pcb, &destIP);
 	 // ping_recv(0, ping_pcb, buf, &destIP);
-
+	  HAL_Delay(1000);
 
 
 
