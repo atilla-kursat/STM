@@ -1,21 +1,7 @@
-17:17:50 **** Incremental Build of configuration Debug for project ethernet_api ****
+16:56:16 **** Build of configuration Debug for project UART_test ****
 make -j12 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../LWIP/App -I../LWIP/Target -I../Middlewares/Third_Party/LwIP/src/include -I../Middlewares/Third_Party/LwIP/system -I../Drivers/BSP/Components/dp83848 -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp -I../Middlewares/Third_Party/LwIP/src/include/lwip -I../Middlewares/Third_Party/LwIP/src/include/lwip/apps -I../Middlewares/Third_Party/LwIP/src/include/lwip/priv -I../Middlewares/Third_Party/LwIP/src/include/lwip/prot -I../Middlewares/Third_Party/LwIP/src/include/netif -I../Middlewares/Third_Party/LwIP/src/include/compat/posix -I../Middlewares/Third_Party/LwIP/src/include/compat/posix/arpa -I../Middlewares/Third_Party/LwIP/src/include/compat/posix/net -I../Middlewares/Third_Party/LwIP/src/include/compat/posix/sys -I../Middlewares/Third_Party/LwIP/src/include/compat/stdc -I../Middlewares/Third_Party/LwIP/system/arch -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-arm-none-eabi-gcc -o "ethernet_api.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\stm\ethernet_api\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ethernet_api.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: ethernet_api.elf
- 
-arm-none-eabi-size   ethernet_api.elf 
-arm-none-eabi-objdump -h -S  ethernet_api.elf  > "ethernet_api.list"
+arm-none-eabi-size   UART_test.elf 
    text	   data	    bss	    dec	    hex	filename
-  78736	    152	  35480	 114368	  1bec0	ethernet_api.elf
-Finished building: default.size.stdout
- 
-Finished building: ethernet_api.list
- 
-17:17:57 **** Incremental Build of configuration Debug for project ethernet_api ****
-make -j12 all 
-arm-none-eabi-size   ethernet_api.elf 
-   text	   data	    bss	    dec	    hex	filename
-  78736	    152	  35480	 114368	  1bec0	ethernet_api.elf
+  12852	     24	   2256	  15132	   3b1c	UART_test.elf
 Finished building: default.size.stdout
  

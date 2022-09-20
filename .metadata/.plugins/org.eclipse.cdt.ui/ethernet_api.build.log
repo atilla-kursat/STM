@@ -1,4 +1,4 @@
-17:17:57 **** Incremental Build of configuration Debug for project ethernet_api ****
+09:29:03 **** Build of configuration Debug for project ethernet_api ****
 make -j12 all 
 arm-none-eabi-size   ethernet_api.elf 
    text	   data	    bss	    dec	    hex	filename
@@ -6,5 +6,5 @@ arm-none-eabi-size   ethernet_api.elf
 Finished building: default.size.stdout
  
 
-17:17:58 Build Finished. 0 errors, 0 warnings. (took 1s.257ms)
+09:29:05 Build Finished. 0 errors, 0 warnings. (took 1s.924ms)
 

@@ -52,6 +52,9 @@ default.size.stdout \
 OBJDUMP_LIST += \
 UART_test.list \
 
+OBJCOPY_BIN += \
+UART_test.bin \
+
 
 # All Target
 all: main-build
@@ -75,12 +78,17 @@ UART_test.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+UART_test.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "UART_test.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) UART_test.elf UART_test.list UART_test.map default.size.stdout
+	-$(RM) UART_test.bin UART_test.elf UART_test.list UART_test.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
